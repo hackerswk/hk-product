@@ -1,0 +1,287 @@
+------ PlatformProductCategories class ------
+<?php
+// Include the necessary files and autoloaders
+
+// Assuming the connection to the database is established and stored in the $pdo variable
+
+use Stanleysie\HkProduct\PlatformProductCategories;
+
+// Create an instance of the PlatformProductCategories class
+$platformProductCategories = new PlatformProductCategories($pdo);
+
+// Sample data for creating a new category
+$newCategoryData = [
+    'category_id' => 123,
+    'parent_id' => 0,
+    'name' => 'New Category',
+    'retail' => 1,
+    'inquiry' => 1
+];
+
+// Call the createCategory method to create a new category
+if ($platformProductCategories->createCategory($newCategoryData)) {
+    echo "New category created successfully.";
+} else {
+    echo "Failed to create new category.";
+}
+
+// Sample data for updating an existing category
+$updateCategoryData = [
+    'category_id' => 123,
+    'parent_id' => 0,
+    'name' => 'Updated Category',
+    'retail' => 0,
+    'inquiry' => 1
+];
+
+// Call the updateCategory method to update an existing category
+if ($platformProductCategories->updateCategory($updateCategoryData)) {
+    echo "Category updated successfully.";
+} else {
+    echo "Failed to update category.";
+}
+?>
+
+------ SiteProductCategories class ------
+<?php
+// Include the necessary files and autoloaders
+
+// Assuming the connection to the database is established and stored in the $pdo variable
+
+use Stanleysie\HkProduct\SiteProductCategories;
+
+// Create an instance of the SiteProductCategories class
+$siteProductCategories = new SiteProductCategories($pdo);
+
+// Sample data for creating a new category
+$newCategoryData = [
+    'category_id' => 123,
+    'parent_id' => 0,
+    'site_id' => 1, // Assuming site ID is 1
+    'name' => 'New Category',
+];
+
+// Call the createCategory method to create a new category
+if ($siteProductCategories->createCategory($newCategoryData)) {
+    echo "New category created successfully.";
+} else {
+    echo "Failed to create new category.";
+}
+
+// Sample data for updating an existing category
+$updateCategoryData = [
+    'category_id' => 123,
+    'parent_id' => 0,
+    'site_id' => 1, // Assuming site ID is 1
+    'name' => 'Updated Category',
+];
+
+// Call the updateCategory method to update an existing category
+if ($siteProductCategories->updateCategory($updateCategoryData)) {
+    echo "Category updated successfully.";
+} else {
+    echo "Failed to update category.";
+}
+?>
+
+------ SiteProductImages class ------
+<?php
+// Include the necessary files and autoloaders
+
+// Assuming the connection to the database is established and stored in the $pdo variable
+
+use Stanleysie\HkProduct\SiteProductImages;
+
+// Create an instance of the SiteProductImages class
+$siteProductImages = new SiteProductImages($pdo);
+
+// Sample data for creating a new product image
+$newImageData = [
+    'product_id' => 123,
+    'img_url' => 'https://example.com/image.jpg',
+    'cover_pic' => 1, // Assuming it's a cover pic
+];
+
+// Call the createProductImage method to create a new product image
+if ($siteProductImages->createProductImage($newImageData)) {
+    echo "New product image created successfully.";
+} else {
+    echo "Failed to create new product image.";
+}
+
+// Sample data for updating an existing product image
+$updateImageData = [
+    'id' => 456, // ID of the existing image to update
+    'product_id' => 123, // ID of the product
+    'img_url' => 'https://example.com/updated_image.jpg',
+    'cover_pic' => 0, // Assuming it's not a cover pic anymore
+];
+
+// Call the updateProductImage method to update an existing product image
+if ($siteProductImages->updateProductImage($updateImageData)) {
+    echo "Product image updated successfully.";
+} else {
+    echo "Failed to update product image.";
+}
+?>
+
+------ SiteProductMainSpec class ------
+<?php
+// Include the necessary files and autoloaders
+
+// Assuming the connection to the database is established and stored in the $pdo variable
+
+use Stanleysie\HkProduct\SiteProductMainSpec;
+
+// Create an instance of the SiteProductMainSpec class
+$siteProductMainSpec = new SiteProductMainSpec($pdo);
+
+// Sample data for creating a new product main specification
+$newMainSpecData = [
+    'product_id' => 123,
+    'name' => 'Main Spec 1',
+    'img_url' => 'https://example.com/main_spec.jpg',
+    'price' => 100,
+    'member_price' => 90,
+    'supply_status' => 1,
+    'inventory' => 50,
+];
+
+// Call the createProductMainSpec method to create a new product main specification
+if ($siteProductMainSpec->createProductMainSpec($newMainSpecData)) {
+    echo "New product main specification created successfully.";
+} else {
+    echo "Failed to create new product main specification.";
+}
+
+// Sample data for updating an existing product main specification
+$updateMainSpecData = [
+    'main_spec_id' => 456, // ID of the existing main specification to update
+    'product_id' => 123, // ID of the product
+    'name' => 'Updated Main Spec 1',
+    'img_url' => 'https://example.com/updated_main_spec.jpg',
+    'price' => 120,
+    'member_price' => 100,
+    'supply_status' => 2,
+    'inventory' => 60,
+];
+
+// Call the updateProductMainSpec method to update an existing product main specification
+if ($siteProductMainSpec->updateProductMainSpec($updateMainSpecData)) {
+    echo "Product main specification updated successfully.";
+} else {
+    echo "Failed to update product main specification.";
+}
+?>
+
+------ SiteProducts class ------
+<?php
+// Include the necessary files and autoloaders
+
+// Assuming the connection to the database is established and stored in the $pdo variable
+
+use Stanleysie\HkProduct\SiteProducts;
+
+// Create an instance of the SiteProducts class
+$siteProducts = new SiteProducts($pdo);
+
+// Sample data for creating a new product
+$newProductData = [
+    'product_id' => 123,
+    'site_id' => 456,
+    'platform_category_id' => 789,
+    'name' => 'Sample Product',
+    'description' => 'This is a sample product description.',
+    'type' => 1,
+    'price' => 100,
+    'member_price' => 90,
+    'supply_status' => 1,
+    'inventory' => 50,
+    'scheduled_release_time' => '2024-04-10 12:00:00',
+    'scheduled_offshelf_time' => '2024-04-20 12:00:00',
+    'auto_offshelf_soldout' => 1,
+    'only_member' => 0,
+    'status' => 1,
+];
+
+// Call the createProduct method to create a new product
+if ($siteProducts->createProduct($newProductData)) {
+    echo "New product created successfully.";
+} else {
+    echo "Failed to create new product.";
+}
+
+// Sample data for updating an existing product
+$updateProductData = [
+    'product_id' => 123, // ID of the existing product to update
+    'site_id' => 456,
+    'platform_category_id' => 789,
+    'name' => 'Updated Sample Product',
+    'description' => 'This is an updated sample product description.',
+    'type' => 1,
+    'price' => 120,
+    'member_price' => 100,
+    'supply_status' => 2,
+    'inventory' => 60,
+    'scheduled_release_time' => '2024-04-15 12:00:00',
+    'scheduled_offshelf_time' => '2024-04-25 12:00:00',
+    'auto_offshelf_soldout' => 1,
+    'only_member' => 0,
+    'status' => 1,
+];
+
+// Call the updateProduct method to update an existing product
+if ($siteProducts->updateProduct($updateProductData)) {
+    echo "Product updated successfully.";
+} else {
+    echo "Failed to update product.";
+}
+?>
+
+------ SiteProductSubSpec class ------
+<?php
+// Include the necessary files and autoloaders
+
+// Assuming the connection to the database is established and stored in the $pdo variable
+
+use Stanleysie\HkProduct\SiteProductSubSpec;
+
+// Create an instance of the SiteProductSubSpec class
+$siteProductSubSpec = new SiteProductSubSpec($pdo);
+
+// Sample data for creating a new product sub specification
+$newSubSpecData = [
+    'main_spec_id' => 123,
+    'name' => 'Sample Sub Spec',
+    'price' => 50,
+    'member_price' => 45,
+    'supply_status' => 1,
+    'inventory' => 100,
+];
+
+// Call the createProductSubSpec method to create a new product sub specification
+if ($siteProductSubSpec->createProductSubSpec($newSubSpecData)) {
+    echo "New product sub specification created successfully.";
+} else {
+    echo "Failed to create new product sub specification.";
+}
+
+// Sample data for updating an existing product sub specification
+$updateSubSpecData = [
+    'sub_spec_id' => 123, // ID of the existing product sub specification to update
+    'main_spec_id' => 123,
+    'name' => 'Updated Sample Sub Spec',
+    'price' => 60,
+    'member_price' => 55,
+    'supply_status' => 2,
+    'inventory' => 120,
+];
+
+// Call the updateProductSubSpec method to update an existing product sub specification
+if ($siteProductSubSpec->updateProductSubSpec($updateSubSpecData)) {
+    echo "Product sub specification updated successfully.";
+} else {
+    echo "Failed to update product sub specification.";
+}
+?>
+
