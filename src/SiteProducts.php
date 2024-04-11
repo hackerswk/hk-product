@@ -59,20 +59,22 @@ EOF;
     }
 
     /**
-     * Retrieve a product by its ID.
+     * Retrieve a product by its ID and status.
      *
      * @param int $productId Product ID
+     * @param int $status Product status (default = 1)
      * @return mixed|null Product data if found, null otherwise
      */
-    public function getProductById($productId)
+    public function getProductById($productId, $status = 1)
     {
         try {
             $sql = <<<EOF
-                SELECT * FROM site_products WHERE product_id = :product_id
+                SELECT * FROM site_products WHERE product_id = :product_id AND status = :status
 EOF;
 
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':product_id', $productId, PDO::PARAM_INT);
+            $stmt->bindParam(':status', $status, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
