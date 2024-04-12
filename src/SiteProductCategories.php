@@ -33,14 +33,15 @@ class SiteProductCategories
     /**
      * Create a new product category.
      *
+     * @param string $table The table name
      * @param array $data Category data
      * @return bool True on success, False on failure
      */
-    public function createCategory($data)
+    public function createCategory($table, $data)
     {
         try {
             $sql = <<<EOF
-                INSERT INTO site_product_categories
+                INSERT INTO $table
                 (category_id, parent_id, site_id, name, created_at, updated_at)
                 VALUES
                 (:category_id, :parent_id, :site_id, :name, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
@@ -80,14 +81,15 @@ EOF;
     /**
      * Update an existing product category.
      *
+     * @param string $table The table name
      * @param array $data Updated category data
      * @return bool True on success, False on failure
      */
-    public function updateCategory($data)
+    public function updateCategory($table, $data)
     {
         try {
             $sql = <<<EOF
-                UPDATE site_product_categories
+                UPDATE $table
                 SET parent_id = :parent_id, site_id = :site_id, name = :name, updated_at = CURRENT_TIMESTAMP()
                 WHERE category_id = :category_id
 EOF;
