@@ -123,4 +123,24 @@ EOF;
             return false;
         }
     }
+
+    /**
+     * Calculate the suffix based on the site_id.
+     *
+     * @param int $site_id The site ID.
+     * @return string The suffix corresponding to the site_id.
+     */
+    function calculateSuffix($site_id)
+    {
+        // Calculate the suffix based on the site_id using modulo operator
+        $suffixNumber = $site_id % 10;
+
+        // Convert the suffix number to the corresponding character
+        $suffix = chr(97 + $suffixNumber); // 97 is the ASCII code for 'a'
+
+        // Append an underscore to the suffix
+        $suffixWithUnderscore = '_' . $suffix;
+
+        return $suffixWithUnderscore;
+    }
 }
