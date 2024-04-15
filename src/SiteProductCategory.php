@@ -33,14 +33,15 @@ class SiteProductCategory
     /**
      * Assign a product to a category.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Product category data
      * @return bool True on success, False on failure
      */
-    public function assignProductToCategory($data)
+    public function assignProductToCategory($table, $data)
     {
         try {
             $sql = <<<EOF
-                INSERT INTO site_product_category (product_id, category_id)
+                INSERT INTO $table (product_id, category_id)
                 VALUES (:product_id, :category_id)
 EOF;
 
@@ -55,14 +56,15 @@ EOF;
     /**
      * Retrieve categories assigned to a product.
      *
+     * @param string $table The name of the SQL table
      * @param int $productId Product ID
      * @return array Categories assigned to the product
      */
-    public function getCategoriesByProductId($productId)
+    public function getCategoriesByProductId($table, $productId)
     {
         try {
             $sql = <<<EOF
-                SELECT * FROM site_product_category WHERE product_id = :product_id
+                SELECT * FROM $table WHERE product_id = :product_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -78,15 +80,16 @@ EOF;
     /**
      * Remove a product from a category.
      *
+     * @param string $table The name of the SQL table
      * @param int $productId Product ID
      * @param int $categoryId Category ID
      * @return bool True on success, False on failure
      */
-    public function removeProductFromCategory($productId, $categoryId)
+    public function removeProductFromCategory($table, $productId, $categoryId)
     {
         try {
             $sql = <<<EOF
-                DELETE FROM site_product_category
+                DELETE FROM $table
                 WHERE product_id = :product_id AND category_id = :category_id
 EOF;
 

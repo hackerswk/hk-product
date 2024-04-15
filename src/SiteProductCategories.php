@@ -58,14 +58,15 @@ EOF;
     /**
      * Retrieve a product category by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $categoryId Category ID
      * @return mixed|null Category data if found, null otherwise
      */
-    public function getCategoryById($categoryId)
+    public function getCategoryById($table, $categoryId)
     {
         try {
             $sql = <<<EOF
-                SELECT * FROM site_product_categories WHERE category_id = :category_id
+            SELECT * FROM $table WHERE category_id = :category_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -105,14 +106,15 @@ EOF;
     /**
      * Delete a product category by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $categoryId Category ID
      * @return bool True on success, False on failure
      */
-    public function deleteCategory($categoryId)
+    public function deleteCategory($table, $categoryId)
     {
         try {
             $sql = <<<EOF
-                DELETE FROM site_product_categories WHERE category_id = :category_id
+            DELETE FROM $table WHERE category_id = :category_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);

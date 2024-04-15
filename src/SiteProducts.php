@@ -33,21 +33,22 @@ class SiteProducts
     /**
      * Create a new product.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Product data
      * @return bool True on success, False on failure
      */
-    public function createProduct($data)
+    public function createProduct($table, $data)
     {
         try {
             $sql = <<<EOF
-                INSERT INTO site_products
-                (product_id, site_id, platform_category_id, name, description, type, price, member_price,
-                supply_status, inventory, scheduled_release_time, scheduled_offshelf_time, auto_offshelf_soldout,
-                only_member, status, created_at, updated_at)
-                VALUES
-                (:product_id, :site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
-                :supply_status, :inventory, :scheduled_release_time, :scheduled_offshelf_time, :auto_offshelf_soldout,
-                :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+            INSERT INTO $table
+            (product_id, site_id, platform_category_id, name, description, type, price, member_price,
+            supply_status, inventory, scheduled_release_time, scheduled_offshelf_time, auto_offshelf_soldout,
+            only_member, status, created_at, updated_at)
+            VALUES
+            (:product_id, :site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
+            :supply_status, :inventory, :scheduled_release_time, :scheduled_offshelf_time, :auto_offshelf_soldout,
+            :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -61,15 +62,16 @@ EOF;
     /**
      * Retrieve a product by its ID and status.
      *
+     * @param string $table The name of the SQL table
      * @param int $productId Product ID
      * @param int $status Product status (default = 1)
      * @return mixed|null Product data if found, null otherwise
      */
-    public function getProductById($productId, $status = 1)
+    public function getProductById($table, $productId, $status = 1)
     {
         try {
             $sql = <<<EOF
-                SELECT * FROM site_products WHERE product_id = :product_id AND status = :status
+            SELECT * FROM $table WHERE product_id = :product_id AND status = :status
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -86,20 +88,21 @@ EOF;
     /**
      * Update an existing product.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Updated product data
      * @return bool True on success, False on failure
      */
-    public function updateProduct($data)
+    public function updateProduct($table, $data)
     {
         try {
             $sql = <<<EOF
-                UPDATE site_products
-                SET site_id = :site_id, platform_category_id = :platform_category_id, name = :name,
-                description = :description, type = :type, price = :price, member_price = :member_price,
-                supply_status = :supply_status, inventory = :inventory, scheduled_release_time = :scheduled_release_time,
-                scheduled_offshelf_time = :scheduled_offshelf_time, auto_offshelf_soldout = :auto_offshelf_soldout,
-                only_member = :only_member, status = :status, updated_at = CURRENT_TIMESTAMP()
-                WHERE product_id = :product_id
+            UPDATE $table
+            SET site_id = :site_id, platform_category_id = :platform_category_id, name = :name,
+            description = :description, type = :type, price = :price, member_price = :member_price,
+            supply_status = :supply_status, inventory = :inventory, scheduled_release_time = :scheduled_release_time,
+            scheduled_offshelf_time = :scheduled_offshelf_time, auto_offshelf_soldout = :auto_offshelf_soldout,
+            only_member = :only_member, status = :status, updated_at = CURRENT_TIMESTAMP()
+            WHERE product_id = :product_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -113,14 +116,15 @@ EOF;
     /**
      * Delete a product by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $productId Product ID
      * @return bool True on success, False on failure
      */
-    public function deleteProduct($productId)
+    public function deleteProduct($table, $productId)
     {
         try {
             $sql = <<<EOF
-                DELETE FROM site_products WHERE product_id = :product_id
+            DELETE FROM $table WHERE product_id = :product_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -131,4 +135,5 @@ EOF;
             return false;
         }
     }
+
 }

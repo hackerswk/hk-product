@@ -33,14 +33,15 @@ class SiteProductImages
     /**
      * Create a new product image.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Product image data
      * @return bool True on success, False on failure
      */
-    public function createProductImage($data)
+    public function createProductImage($table, $data)
     {
         try {
             $sql = <<<EOF
-                INSERT INTO site_product_images
+                INSERT INTO $table
                 (product_id, img_url, cover_pic, created_at, updated_at)
                 VALUES
                 (:product_id, :img_url, :cover_pic, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
@@ -57,14 +58,15 @@ EOF;
     /**
      * Retrieve a product image by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $imageId Image ID
      * @return mixed|null Image data if found, null otherwise
      */
-    public function getProductImageById($imageId)
+    public function getProductImageById($table, $imageId)
     {
         try {
             $sql = <<<EOF
-                SELECT * FROM site_product_images WHERE id = :image_id
+                SELECT * FROM $table WHERE id = :image_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -80,14 +82,15 @@ EOF;
     /**
      * Update an existing product image.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Updated product image data
      * @return bool True on success, False on failure
      */
-    public function updateProductImage($data)
+    public function updateProductImage($table, $data)
     {
         try {
             $sql = <<<EOF
-                UPDATE site_product_images
+                UPDATE $table
                 SET product_id = :product_id, img_url = :img_url, cover_pic = :cover_pic, updated_at = CURRENT_TIMESTAMP()
                 WHERE id = :id
 EOF;
@@ -103,14 +106,15 @@ EOF;
     /**
      * Delete a product image by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $imageId Image ID
      * @return bool True on success, False on failure
      */
-    public function deleteProductImage($imageId)
+    public function deleteProductImage($table, $imageId)
     {
         try {
             $sql = <<<EOF
-                DELETE FROM site_product_images WHERE id = :image_id
+                DELETE FROM $table WHERE id = :image_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);

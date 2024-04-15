@@ -33,14 +33,15 @@ class SiteProductVideos
     /**
      * Create a new product video.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Product video data
      * @return bool True on success, False on failure
      */
-    public function createProductVideo($data)
+    public function createProductVideo($table, $data)
     {
         try {
             $sql = <<<EOF
-                INSERT INTO site_product_videos
+                INSERT INTO $table
                 (product_id, video_url, created_at, updated_at)
                 VALUES
                 (:product_id, :video_url, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
@@ -57,14 +58,15 @@ EOF;
     /**
      * Retrieve a product video by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $videoId Video ID
      * @return mixed|null Video data if found, null otherwise
      */
-    public function getProductVideoById($videoId)
+    public function getProductVideoById($table, $videoId)
     {
         try {
             $sql = <<<EOF
-                SELECT * FROM site_product_videos WHERE id = :video_id
+                SELECT * FROM $table WHERE id = :video_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -80,14 +82,15 @@ EOF;
     /**
      * Update an existing product video.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Updated product video data
      * @return bool True on success, False on failure
      */
-    public function updateProductVideo($data)
+    public function updateProductVideo($table, $data)
     {
         try {
             $sql = <<<EOF
-                UPDATE site_product_videos
+                UPDATE $table
                 SET product_id = :product_id, video_url = :video_url, updated_at = CURRENT_TIMESTAMP()
                 WHERE id = :id
 EOF;
@@ -103,14 +106,15 @@ EOF;
     /**
      * Delete a product video by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $videoId Video ID
      * @return bool True on success, False on failure
      */
-    public function deleteProductVideo($videoId)
+    public function deleteProductVideo($table, $videoId)
     {
         try {
             $sql = <<<EOF
-                DELETE FROM site_product_videos WHERE id = :video_id
+                DELETE FROM $table WHERE id = :video_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);

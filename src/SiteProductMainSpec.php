@@ -33,14 +33,15 @@ class SiteProductMainSpec
     /**
      * Create a new product main specification.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Product main specification data
      * @return bool True on success, False on failure
      */
-    public function createProductMainSpec($data)
+    public function createProductMainSpec($table, $data)
     {
         try {
             $sql = <<<EOF
-                INSERT INTO site_product_main_spec
+                INSERT INTO $table
                 (product_id, name, img_url, price, member_price, supply_status, inventory, created_at, updated_at)
                 VALUES
                 (:product_id, :name, :img_url, :price, :member_price, :supply_status, :inventory, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
@@ -57,14 +58,15 @@ EOF;
     /**
      * Retrieve a product main specification by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $mainSpecId Main specification ID
      * @return mixed|null Main specification data if found, null otherwise
      */
-    public function getProductMainSpecById($mainSpecId)
+    public function getProductMainSpecById($table, $mainSpecId)
     {
         try {
             $sql = <<<EOF
-                SELECT * FROM site_product_main_spec WHERE main_spec_id = :main_spec_id
+                SELECT * FROM $table WHERE main_spec_id = :main_spec_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -80,14 +82,15 @@ EOF;
     /**
      * Update an existing product main specification.
      *
+     * @param string $table The name of the SQL table
      * @param array $data Updated product main specification data
      * @return bool True on success, False on failure
      */
-    public function updateProductMainSpec($data)
+    public function updateProductMainSpec($table, $data)
     {
         try {
             $sql = <<<EOF
-                UPDATE site_product_main_spec
+                UPDATE $table
                 SET product_id = :product_id, name = :name, img_url = :img_url, price = :price, member_price = :member_price,
                 supply_status = :supply_status, inventory = :inventory, updated_at = CURRENT_TIMESTAMP()
                 WHERE main_spec_id = :main_spec_id
@@ -104,14 +107,15 @@ EOF;
     /**
      * Delete a product main specification by its ID.
      *
+     * @param string $table The name of the SQL table
      * @param int $mainSpecId Main specification ID
      * @return bool True on success, False on failure
      */
-    public function deleteProductMainSpec($mainSpecId)
+    public function deleteProductMainSpec($table, $mainSpecId)
     {
         try {
             $sql = <<<EOF
-                DELETE FROM site_product_main_spec WHERE main_spec_id = :main_spec_id
+                DELETE FROM $table WHERE main_spec_id = :main_spec_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
