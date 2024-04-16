@@ -86,26 +86,28 @@ EOF;
     }
 
     /**
-     * Get products with pagination.
+     * Get products with pagination for a specific site.
      *
      * @param string $table The name of the SQL table
+     * @param int $site_id The ID of the site
      * @param int $page The page number
      * @param int $pageSize The number of products per page
-     * @return array Products for the specified page
+     * @return array Products for the specified site and page
      */
-    public function getProducts($table, $page, $pageSize)
+    public function getProducts($table, $site_id, $page, $pageSize)
     {
         try {
             // Calculate OFFSET value
             $offset = ($page - 1) * $pageSize;
 
             // Build SQL query
-            $sql = "SELECT * FROM $table LIMIT :pageSize OFFSET :offset";
+            $sql = "SELECT * FROM $table WHERE site_id = :site_id LIMIT :pageSize OFFSET :offset";
 
             // Prepare SQL statement
             $stmt = $this->conn->prepare($sql);
 
             // Bind parameters
+            $stmt->bindParam(':site_id', $site_id, PDO::PARAM_INT);
             $stmt->bindParam(':pageSize', $pageSize, PDO::PARAM_INT);
             $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 
