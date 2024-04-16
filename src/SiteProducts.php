@@ -86,16 +86,33 @@ EOF;
     }
 
     /**
-     * Get all products.
+     * Get products with pagination.
      *
      * @param string $table The name of the SQL table
-     * @return array All products
+     * @param int $page The page number
+     * @param int $pageSize The number of products per page
+     * @return array Products for the specified page
      */
-    public function getProducts($table)
+    public function getProducts($table, $page, $pageSize)
     {
         try {
-            $sql = "SELECT * FROM $table";
-            $stmt = $this->conn->query($sql);
+            // Calculate OFFSET value
+            $offset = ($page - 1) * $pageSize;
+
+            // Build SQL query
+            $sql = "SELECT * FROM $table LIMIT :pageSize OFFSET :offset";
+
+            // Prepare SQL statement
+            $stmt = $this->conn->prepare($sql);
+
+            // Bind parameters
+            $stmt->bindParam(':pageSize', $pageSize, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+
+            // Execute query
+            $stmt->execute();
+
+            // Return results
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
