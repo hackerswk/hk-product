@@ -78,6 +78,23 @@ EOF;
     }
 
     /**
+     * Get all product categories.
+     *
+     * @return array All product categories
+     */
+    public function getCategories()
+    {
+        try {
+            $sql = "SELECT * FROM platform_product_categories";
+            $stmt = $this->conn->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+
+    /**
      * Update an existing product category.
      *
      * @param array $data Updated category data
