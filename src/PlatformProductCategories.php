@@ -41,9 +41,9 @@ class PlatformProductCategories
         try {
             $sql = <<<EOF
                 INSERT INTO platform_product_categories
-                (category_id, parent_id, name, retail, inquiry, created_at, updated_at)
+                (category_id, parent_id, name, retail, inquiry, sensitive, sensitive_type, created_at, updated_at)
                 VALUES
-                (:category_id, :parent_id, :name, :retail, :inquiry, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+                (:category_id, :parent_id, :name, :retail, :inquiry, :sensitive, :sensitive_type, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -88,7 +88,7 @@ EOF;
         try {
             $sql = <<<EOF
                 UPDATE platform_product_categories
-                SET parent_id = :parent_id, name = :name, retail = :retail, inquiry = :inquiry, updated_at = CURRENT_TIMESTAMP()
+                SET parent_id = :parent_id, name = :name, retail = :retail, inquiry = :inquiry, sensitive = :sensitive, sensitive_type = :sensitive_type, updated_at = CURRENT_TIMESTAMP()
                 WHERE category_id = :category_id
 EOF;
 

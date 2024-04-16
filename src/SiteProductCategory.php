@@ -78,6 +78,30 @@ EOF;
     }
 
     /**
+     * Get products by category ID.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $categoryId Category ID
+     * @return array Products assigned to the category
+     */
+    public function getProductsByCategoryId($table, $categoryId)
+    {
+        try {
+            $sql = <<<EOF
+                SELECT * FROM $table WHERE category_id = :category_id
+EOF;
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':category_id', $categoryId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+
+    /**
      * Remove a product from a category.
      *
      * @param string $table The name of the SQL table

@@ -42,9 +42,9 @@ class SiteProductCategories
         try {
             $sql = <<<EOF
                 INSERT INTO $table
-                (category_id, parent_id, site_id, name, created_at, updated_at)
+                (parent_id, site_id, name, sort, created_at, updated_at)
                 VALUES
-                (:category_id, :parent_id, :site_id, :name, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+                (:parent_id, :site_id, :name, :sort, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -66,7 +66,7 @@ EOF;
     {
         try {
             $sql = <<<EOF
-            SELECT * FROM $table WHERE category_id = :category_id
+                SELECT * FROM $table WHERE category_id = :category_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -91,7 +91,7 @@ EOF;
         try {
             $sql = <<<EOF
                 UPDATE $table
-                SET parent_id = :parent_id, site_id = :site_id, name = :name, updated_at = CURRENT_TIMESTAMP()
+                SET parent_id = :parent_id, site_id = :site_id, name = :name, sort = :sort, updated_at = CURRENT_TIMESTAMP()
                 WHERE category_id = :category_id
 EOF;
 
@@ -114,7 +114,7 @@ EOF;
     {
         try {
             $sql = <<<EOF
-            DELETE FROM $table WHERE category_id = :category_id
+                DELETE FROM $table WHERE category_id = :category_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -123,6 +123,30 @@ EOF;
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return false;
+        }
+    }
+
+    /**
+     * Get product categories by site ID.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $siteId Site ID
+     * @return array Product categories for the specified site ID
+     */
+    public function getCategoriesBySiteId($table, $siteId)
+    {
+        try {
+            $sql = <<<EOF
+                SELECT * FROM $table WHERE site_id = :site_id
+EOF;
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':site_id', $siteId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
         }
     }
 
