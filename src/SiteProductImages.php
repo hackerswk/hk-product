@@ -42,9 +42,9 @@ class SiteProductImages
         try {
             $sql = <<<EOF
                 INSERT INTO $table
-                (product_id, img_url, cover_pic, created_at, updated_at)
+                (product_id, img_url, cover_pic, sort, created_at, updated_at)
                 VALUES
-                (:product_id, :img_url, :cover_pic, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+                (:product_id, :img_url, :cover_pic, :sort, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -115,7 +115,7 @@ EOF;
         try {
             $sql = <<<EOF
                 UPDATE $table
-                SET product_id = :product_id, img_url = :img_url, cover_pic = :cover_pic, updated_at = CURRENT_TIMESTAMP()
+                SET product_id = :product_id, img_url = :img_url, cover_pic = :cover_pic, sort = :sort, updated_at = CURRENT_TIMESTAMP()
                 WHERE id = :id
 EOF;
 
