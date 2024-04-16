@@ -80,6 +80,30 @@ EOF;
     }
 
     /**
+     * Retrieve product sub specifications by main specification ID.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $mainSpecId Main specification ID
+     * @return array Product sub specifications
+     */
+    public function getProductSubSpecsByMainSpec($table, $mainSpecId)
+    {
+        try {
+            $sql = <<<EOF
+            SELECT * FROM $table WHERE main_spec_id = :main_spec_id
+EOF;
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':main_spec_id', $mainSpecId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+
+    /**
      * Update an existing product sub specification.
      *
      * @param string $table The name of the SQL table

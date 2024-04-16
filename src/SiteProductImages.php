@@ -80,6 +80,30 @@ EOF;
     }
 
     /**
+     * Retrieve product images by product ID.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $productId Product ID
+     * @return array Product images
+     */
+    public function getProductImages($table, $productId)
+    {
+        try {
+            $sql = <<<EOF
+                SELECT * FROM $table WHERE product_id = :product_id
+EOF;
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':product_id', $productId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+
+    /**
      * Update an existing product image.
      *
      * @param string $table The name of the SQL table

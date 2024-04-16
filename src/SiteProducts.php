@@ -42,11 +42,11 @@ class SiteProducts
         try {
             $sql = <<<EOF
             INSERT INTO $table
-            (product_id, site_id, platform_category_id, name, description, type, price, member_price,
+            (site_id, platform_category_id, name, description, type, price, member_price,
             supply_status, inventory, scheduled_release_time, scheduled_offshelf_time, auto_offshelf_soldout,
             only_member, status, created_at, updated_at)
             VALUES
-            (:product_id, :site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
+            (:site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
             :supply_status, :inventory, :scheduled_release_time, :scheduled_offshelf_time, :auto_offshelf_soldout,
             :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
@@ -82,6 +82,24 @@ EOF;
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return null;
+        }
+    }
+
+    /**
+     * Get all products.
+     *
+     * @param string $table The name of the SQL table
+     * @return array All products
+     */
+    public function getProducts($table)
+    {
+        try {
+            $sql = "SELECT * FROM $table";
+            $stmt = $this->conn->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
         }
     }
 
