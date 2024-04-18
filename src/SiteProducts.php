@@ -41,14 +41,14 @@ class SiteProducts
     {
         try {
             $sql = <<<EOF
-            INSERT INTO $table
-            (site_id, platform_category_id, name, description, type, price, member_price,
-            supply_status, inventory, scheduled_release_time, scheduled_offshelf_time, auto_offshelf_soldout,
-            only_member, status, created_at, updated_at)
-            VALUES
-            (:site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
-            :supply_status, :inventory, :scheduled_release_time, :scheduled_offshelf_time, :auto_offshelf_soldout,
-            :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+        INSERT INTO $table
+        (site_id, platform_category_id, name, description, type, price, member_price,
+        supply_status, inventory, release_at, offshelf_at, scheduled_release_time, scheduled_offshelf_time, auto_offshelf_soldout,
+        only_member, status, created_at, updated_at)
+        VALUES
+        (:site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
+        :supply_status, :inventory, :release_at, :offshelf_at, :scheduled_release_time, :scheduled_offshelf_time, :auto_offshelf_soldout,
+        :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -133,13 +133,14 @@ EOF;
     {
         try {
             $sql = <<<EOF
-            UPDATE $table
-            SET site_id = :site_id, platform_category_id = :platform_category_id, name = :name,
-            description = :description, type = :type, price = :price, member_price = :member_price,
-            supply_status = :supply_status, inventory = :inventory, scheduled_release_time = :scheduled_release_time,
-            scheduled_offshelf_time = :scheduled_offshelf_time, auto_offshelf_soldout = :auto_offshelf_soldout,
-            only_member = :only_member, status = :status, updated_at = CURRENT_TIMESTAMP()
-            WHERE product_id = :product_id
+        UPDATE $table
+        SET site_id = :site_id, platform_category_id = :platform_category_id, name = :name,
+        description = :description, type = :type, price = :price, member_price = :member_price,
+        supply_status = :supply_status, inventory = :inventory, release_at = :release_at,
+        offshelf_at = :offshelf_at, scheduled_release_time = :scheduled_release_time,
+        scheduled_offshelf_time = :scheduled_offshelf_time, auto_offshelf_soldout = :auto_offshelf_soldout,
+        only_member = :only_member, status = :status, updated_at = CURRENT_TIMESTAMP()
+        WHERE product_id = :product_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
