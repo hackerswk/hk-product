@@ -35,24 +35,29 @@ class SiteProducts
      *
      * @param string $table The name of the SQL table
      * @param array $data Product data
-     * @return bool True on success, False on failure
+     * @return int|bool The last inserted ID on success, False on failure
      */
     public function createProduct($table, $data)
     {
         try {
             $sql = <<<EOF
-        INSERT INTO $table
-        (site_id, platform_category_id, name, description, type, price, member_price,
-        supply_status, inventory, release_at, offshelf_at, scheduled_release_time, scheduled_offshelf_time, auto_offshelf_soldout,
-        only_member, status, created_at, updated_at)
-        VALUES
-        (:site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
-        :supply_status, :inventory, :release_at, :offshelf_at, :scheduled_release_time, :scheduled_offshelf_time, :auto_offshelf_soldout,
-        :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+            INSERT INTO $table
+            (site_id, platform_category_id, name, description, type, price, member_price,
+            supply_status, inventory, release_at, offshelf_at, scheduled_release_time, scheduled_offshelf_time, auto_offshelf_soldout,
+            only_member, status, created_at, updated_at)
+            VALUES
+            (:site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
+            :supply_status, :inventory, :release_at, :offshelf_at, :scheduled_release_time, :scheduled_offshelf_time, :auto_offshelf_soldout,
+            :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
 
             $stmt = $this->conn->prepare($sql);
-            return $stmt->execute($data);
+            $result = $stmt->execute($data);
+            if ($result) {
+                return $this->conn->lastInsertId();
+            } else {
+                return false;
+            }
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return false;
