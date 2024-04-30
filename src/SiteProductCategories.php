@@ -35,20 +35,27 @@ class SiteProductCategories
      *
      * @param string $table The table name
      * @param array $data Category data
-     * @return bool True on success, False on failure
+     * @return int|bool The last inserted ID on success, False on failure
      */
     public function createCategory($table, $data)
     {
         try {
             $sql = <<<EOF
-                INSERT INTO $table
-                (parent_id, site_id, name, sort, created_at, updated_at)
-                VALUES
-                (:parent_id, :site_id, :name, :sort, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+            INSERT INTO $table
+            (parent_id, site_id, name, sort, created_at, updated_at)
+            VALUES
+            (:parent_id, :site_id, :name, :sort, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
 
             $stmt = $this->conn->prepare($sql);
-            return $stmt->execute($data);
+            $result = $stmt->execute($data);
+
+            // If insertion was successful, return the last inserted ID
+            if ($result) {
+                return $this->conn->lastInsertId();
+            } else {
+                return false;
+            }
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return false;
