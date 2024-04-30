@@ -35,20 +35,24 @@ class SiteProductMainSpec
      *
      * @param string $table The name of the SQL table
      * @param array $data Product main specification data
-     * @return bool True on success, False on failure
+     * @return int|bool The last insert ID on success, False on failure
      */
     public function createProductMainSpec($table, $data)
     {
         try {
             $sql = <<<EOF
-                INSERT INTO $table
-                (product_id, name, img_url, price, member_price, supply_status, inventory, created_at, updated_at)
-                VALUES
-                (:product_id, :name, :img_url, :price, :member_price, :supply_status, :inventory, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+            INSERT INTO $table
+            (product_id, name, img_url, price, member_price, supply_status, inventory, created_at, updated_at)
+            VALUES
+            (:product_id, :name, :img_url, :price, :member_price, :supply_status, :inventory, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
 EOF;
 
             $stmt = $this->conn->prepare($sql);
-            return $stmt->execute($data);
+            if ($stmt->execute($data)) {
+                return $this->conn->lastInsertId();
+            } else {
+                return false;
+            }
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return false;
