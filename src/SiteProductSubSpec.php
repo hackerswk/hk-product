@@ -150,4 +150,20 @@ EOF;
             return false;
         }
     }
+
+    /**
+     * Set the database for the connection.
+     *
+     * @param string $dbName Database name
+     * @return void
+     */
+    public function setDatabase($dbName)
+    {
+        try {
+            $this->conn->exec("USE $dbName");
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
+
 }
