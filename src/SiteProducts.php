@@ -194,4 +194,41 @@ EOF;
         }
     }
 
+    /**
+     * Get products that are on sell (status != 0) for a specific site with pagination.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $site_id The ID of the site
+     * @param int $page The page number
+     * @param int $pageSize The number of products per page
+     * @return array Products on sell for the specified site and page
+     */
+    public function getOnSellProducts($table, $site_id, $page, $pageSize)
+    {
+        try {
+            // Calculate OFFSET value
+            $offset = ($page - 1) * $pageSize;
+
+            // Build SQL query
+            $sql = "SELECT * FROM $table WHERE site_id = :site_id AND status != 0 LIMIT :pageSize OFFSET :offset";
+
+            // Prepare SQL statement
+            $stmt = $this->conn->prepare($sql);
+
+            // Bind parameters
+            $stmt->bindParam(':site_id', $site_id, PDO::PARAM_INT);
+            $stmt->bindParam(':pageSize', $pageSize, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+
+            // Execute query
+            $stmt->execute();
+
+            // Return results
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+
 }
