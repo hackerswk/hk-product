@@ -231,4 +231,16 @@ EOF;
         }
     }
 
+    /**
+     * Returns the product code.
+     *
+     * @param int $productId The product ID.
+     * @return string The product code.
+     */
+    public function getProductCoding($productId)
+    {
+        $prefix = strtoupper(str_replace('_', '', $this->suffix));
+        return $prefix . str_pad($productId, 11, '0', STR_PAD_LEFT);
+    }
+
 }
