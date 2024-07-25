@@ -167,11 +167,9 @@ EOF;
     {
         try {
             $sql = <<<EOF
-            UPDATE $table SET deleted_at = :now WHERE product_id = :product_id
+            UPDATE $table SET deleted_at = NOW() WHERE product_id = :product_id
 EOF;
-
             $stmt = $this->conn->prepare($sql);
-            $stmt->bindParam(':now', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $stmt->bindParam(':product_id', $productId, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {

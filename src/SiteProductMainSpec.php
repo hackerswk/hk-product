@@ -143,11 +143,10 @@ EOF;
     {
         try {
             $sql = <<<EOF
-                UPDATE $table SET deleted_at = :now WHERE main_spec_id = :main_spec_id
+                UPDATE $table SET deleted_at = NOW() WHERE main_spec_id = :main_spec_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
-            $stmt->bindParam(':now', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $stmt->bindParam(':main_spec_id', $mainSpecId, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
