@@ -76,7 +76,7 @@ EOF;
     {
         try {
             $sql = <<<EOF
-            SELECT * FROM $table WHERE product_id = :product_id AND status = :status
+            SELECT * FROM $table WHERE product_id = :product_id AND status = :status AND deleted_at IS NULL
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -106,7 +106,7 @@ EOF;
             $offset = ($page - 1) * $pageSize;
 
             // Build SQL query
-            $sql = "SELECT * FROM $table WHERE site_id = :site_id LIMIT :pageSize OFFSET :offset";
+            $sql = "SELECT * FROM $table WHERE site_id = :site_id AND deleted_at IS NULL LIMIT :pageSize OFFSET :offset";
 
             // Prepare SQL statement
             $stmt = $this->conn->prepare($sql);
@@ -167,10 +167,11 @@ EOF;
     {
         try {
             $sql = <<<EOF
-            DELETE FROM $table WHERE product_id = :product_id
+            UPDATE $table SET deleted_at = :now WHERE product_id = :product_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':now', $now, PDO::PARAM_STR);
             $stmt->bindParam(':product_id', $productId, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
@@ -210,7 +211,7 @@ EOF;
             $offset = ($page - 1) * $pageSize;
 
             // Build SQL query
-            $sql = "SELECT * FROM $table WHERE site_id = :site_id AND status != 0 LIMIT :pageSize OFFSET :offset";
+            $sql = "SELECT * FROM $table WHERE site_id = :site_id AND status != 0 AND deleted_at IS NULL LIMIT :pageSize OFFSET :offset";
 
             // Prepare SQL statement
             $stmt = $this->conn->prepare($sql);
