@@ -171,7 +171,7 @@ EOF;
 EOF;
 
             $stmt = $this->conn->prepare($sql);
-            $stmt->bindParam(':now', $now, PDO::PARAM_STR);
+            $stmt->bindParam(':now', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $stmt->bindParam(':product_id', $productId, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
