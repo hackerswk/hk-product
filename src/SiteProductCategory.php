@@ -41,8 +41,8 @@ class SiteProductCategory
     {
         try {
             $sql = <<<EOF
-                INSERT INTO $table (product_id, category_id, created_by)
-                VALUES (:product_id, :category_id, :created_by)
+                INSERT INTO $table (product_id, category_id)
+                VALUES (:product_id, :category_id)
 EOF;
 
             $stmt = $this->conn->prepare($sql);
