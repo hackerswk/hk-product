@@ -42,9 +42,9 @@ class SiteProductSubSpec
         try {
             $sql = <<<EOF
                 INSERT INTO $table
-                (main_spec_id, name, price, member_price, supply_status, inventory, created_at, updated_at)
+                (main_spec_id, name, price, member_price, supply_status, inventory, created_at, updated_at, created_by)
                 VALUES
-                (:main_spec_id, :name, :price, :member_price, :supply_status, :inventory, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+                (:main_spec_id, :name, :price, :member_price, :supply_status, :inventory, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), :created_by)
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -116,7 +116,7 @@ EOF;
             $sql = <<<EOF
                 UPDATE $table
                 SET main_spec_id = :main_spec_id, name = :name, price = :price, member_price = :member_price,
-                supply_status = :supply_status, inventory = :inventory, updated_at = CURRENT_TIMESTAMP()
+                supply_status = :supply_status, inventory = :inventory, updated_at = CURRENT_TIMESTAMP(), updated_by = :updated_by
                 WHERE sub_spec_id = :sub_spec_id
 EOF;
 
@@ -135,15 +135,16 @@ EOF;
      * @param int $subSpecId Sub specification ID
      * @return bool True on success, False on failure
      */
-    public function deleteProductSubSpec($table, $subSpecId)
+    public function deleteProductSubSpec($table, $subSpecId, $updated_by)
     {
         try {
             $sql = <<<EOF
-                UPDATE $table SET deleted_at = NOW() WHERE sub_spec_id = :sub_spec_id
+                UPDATE $table SET deleted_at = NOW(), updated_by = :updated_by WHERE sub_spec_id = :sub_spec_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':sub_spec_id', $subSpecId, PDO::PARAM_INT);
+            $stmt->bindParam(':updated_by', $updated_by, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();

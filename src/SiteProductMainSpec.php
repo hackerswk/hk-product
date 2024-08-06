@@ -42,9 +42,9 @@ class SiteProductMainSpec
         try {
             $sql = <<<EOF
             INSERT INTO $table
-            (product_id, name, img_url, price, member_price, supply_status, inventory, created_at, updated_at)
+            (product_id, name, img_url, price, member_price, supply_status, inventory, created_at, updated_at, created_by)
             VALUES
-            (:product_id, :name, :img_url, :price, :member_price, :supply_status, :inventory, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+            (:product_id, :name, :img_url, :price, :member_price, :supply_status, :inventory, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), :created_by)
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -120,7 +120,7 @@ EOF;
             $sql = <<<EOF
                 UPDATE $table
                 SET product_id = :product_id, name = :name, img_url = :img_url, price = :price, member_price = :member_price,
-                supply_status = :supply_status, inventory = :inventory, updated_at = CURRENT_TIMESTAMP()
+                supply_status = :supply_status, inventory = :inventory, updated_at = CURRENT_TIMESTAMP(), updated_by = :updated_by
                 WHERE main_spec_id = :main_spec_id
 EOF;
 
@@ -139,15 +139,16 @@ EOF;
      * @param int $mainSpecId Main specification ID
      * @return bool True on success, False on failure
      */
-    public function deleteProductMainSpec($table, $mainSpecId)
+    public function deleteProductMainSpec($table, $mainSpecId, $updated_by)
     {
         try {
             $sql = <<<EOF
-                UPDATE $table SET deleted_at = NOW() WHERE main_spec_id = :main_spec_id
+                UPDATE $table SET deleted_at = NOW(), updated_by = :updated_by WHERE main_spec_id = :main_spec_id
 EOF;
 
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':main_spec_id', $mainSpecId, PDO::PARAM_INT);
+            $stmt->bindParam(':updated_by', $updated_by, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();

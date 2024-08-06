@@ -44,11 +44,11 @@ class SiteProducts
             INSERT INTO $table
             (site_id, platform_category_id, name, description, type, price, member_price,
             supply_status, inventory, release_at, offshelf_at, scheduled_release_time, scheduled_offshelf_time, auto_offshelf_soldout,
-            only_member, status, created_at, updated_at)
+            only_member, status, created_at, updated_at, created_by)
             VALUES
             (:site_id, :platform_category_id, :name, :description, :type, :price, :member_price,
             :supply_status, :inventory, :release_at, :offshelf_at, :scheduled_release_time, :scheduled_offshelf_time, :auto_offshelf_soldout,
-            :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+            :only_member, :status, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), :created_by)
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -144,7 +144,7 @@ EOF;
         supply_status = :supply_status, inventory = :inventory, release_at = :release_at,
         offshelf_at = :offshelf_at, scheduled_release_time = :scheduled_release_time,
         scheduled_offshelf_time = :scheduled_offshelf_time, auto_offshelf_soldout = :auto_offshelf_soldout,
-        only_member = :only_member, status = :status, updated_at = CURRENT_TIMESTAMP()
+        only_member = :only_member, status = :status, updated_at = CURRENT_TIMESTAMP(), updated_by = :updated_by
         WHERE product_id = :product_id
 EOF;
 
@@ -163,14 +163,15 @@ EOF;
      * @param int $productId Product ID
      * @return bool True on success, False on failure
      */
-    public function deleteProduct($table, $productId)
+    public function deleteProduct($table, $productId, $updated_by)
     {
         try {
             $sql = <<<EOF
-            UPDATE $table SET deleted_at = NOW() WHERE product_id = :product_id
+            UPDATE $table SET deleted_at = NOW(), updated_by = :updated_by WHERE product_id = :product_id
 EOF;
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':product_id', $productId, PDO::PARAM_INT);
+            $stmt->bindParam(':updated_by', $updated_by, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();

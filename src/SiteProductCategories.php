@@ -42,9 +42,9 @@ class SiteProductCategories
         try {
             $sql = <<<EOF
             INSERT INTO $table
-            (parent_id, site_id, name, sort, created_at, updated_at)
+            (parent_id, site_id, name, sort, created_at, updated_at, created_by)
             VALUES
-            (:parent_id, :site_id, :name, :sort, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+            (:parent_id, :site_id, :name, :sort, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), :created_by)
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -98,7 +98,7 @@ EOF;
         try {
             $sql = <<<EOF
                 UPDATE $table
-                SET parent_id = :parent_id, site_id = :site_id, name = :name, sort = :sort, updated_at = CURRENT_TIMESTAMP()
+                SET parent_id = :parent_id, site_id = :site_id, name = :name, sort = :sort, updated_at = CURRENT_TIMESTAMP(), updated_by = :updated_by
                 WHERE category_id = :category_id
 EOF;
 
