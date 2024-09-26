@@ -106,7 +106,7 @@ EOF;
             $offset = ($page - 1) * $pageSize;
 
             // Build SQL query
-            $sql = "SELECT * FROM $table WHERE site_id = :site_id AND deleted_at IS NULL LIMIT :pageSize OFFSET :offset";
+            $sql = "SELECT * FROM $table WHERE site_id = :site_id AND deleted_at IS NULL ORDER BY product_id DESC LIMIT :pageSize OFFSET :offset";
 
             // Prepare SQL statement
             $stmt = $this->conn->prepare($sql);
