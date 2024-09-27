@@ -115,9 +115,10 @@ EOF;
             // Extract the suffix from the $table (last character after "_")
             $suffix = substr($table, strrpos($table, '_') + 1);
 
-            // Construct the dynamic table names for product main spec and category
+            // Construct the dynamic table names for product main spec, category, and sub spec
             $productMainSpecTable = "site_product_main_spec_" . $suffix;
             $productCategoryTable = "site_product_category_" . $suffix;
+            $productSubSpecTable = "site_product_sub_spec_" . $suffix;
 
             // Start building SQL query
             $sql = "SELECT * FROM $table WHERE site_id = :site_id AND deleted_at IS NULL";
@@ -139,12 +140,27 @@ EOF;
             // Add condition for inventory status
             switch ($inventory_status) {
                 case 'partial':
-                    // Products with some specifications that have zero stock
-                    $sql .= " AND EXISTS (
-                    SELECT 1 FROM $productMainSpecTable
-                    WHERE $productMainSpecTable.product_id = $table.product_id
-                    AND $productMainSpecTable.inventory = 0
-                ) AND $table.inventory > 0"; // At least one product specification is out of stock
+                    // Products with some main specifications that have zero stock
+                    // No need to check sub specs if any main spec has inventory = 0
+                    $sql .= " AND (
+                    EXISTS (
+                        SELECT 1 FROM $productMainSpecTable
+                        WHERE $productMainSpecTable.product_id = $table.product_id
+                        AND $productMainSpecTable.inventory = 0
+                    )
+                    OR (
+                        $table.inventory > 0 AND EXISTS (
+                            SELECT 1 FROM $productMainSpecTable
+                            WHERE $productMainSpecTable.product_id = $table.product_id
+                            AND $productMainSpecTable.inventory > 0
+                            AND EXISTS (
+                                SELECT 1 FROM $productSubSpecTable
+                                WHERE $productSubSpecTable.main_spec_id = $productMainSpecTable.id
+                                AND $productSubSpecTable.inventory = 0
+                            )
+                        )
+                    )
+                )";
                     break;
                 case 'none':
                     // Products with zero or negative inventory
