@@ -91,28 +91,86 @@ EOF;
     }
 
     /**
-     * Get products with pagination for a specific site.
+     * Retrieves products from the specified table with pagination, filtering by name, status, platform_category_id, and inventory status.
      *
-     * @param string $table The name of the SQL table
-     * @param int $site_id The ID of the site
-     * @param int $page The page number
-     * @param int $pageSize The number of products per page
-     * @return array Products for the specified site and page
+     * Dynamically generates the product main spec table based on the suffix of the given $table.
+     *
+     * @param string $table The name of the database table to query (must follow format: site_products_<letter>).
+     * @param int $site_id The ID of the site to filter products by.
+     * @param int $page The page number for pagination.
+     * @param int $pageSize The number of records per page.
+     * @param string|null $name The optional name filter for products (fuzzy search).
+     * @param int|null $status The status filter for products (default is 1).
+     * @param int|null $platform_category_id The platform category filter (optional).
+     * @param string $inventory_status The inventory status filter (default is 'normal'). Options: 'normal', 'partial', 'none'.
+     *
+     * @return array An array of products matching the criteria.
      */
-    public function getProducts($table, $site_id, $page, $pageSize)
+    public function getProducts($table, $site_id, $page, $pageSize, $status = 1, $inventory_status = 'normal', $name = null, $platform_category_id = null)
     {
         try {
             // Calculate OFFSET value
             $offset = ($page - 1) * $pageSize;
 
-            // Build SQL query
-            $sql = "SELECT * FROM $table WHERE site_id = :site_id AND deleted_at IS NULL ORDER BY product_id DESC LIMIT :pageSize OFFSET :offset";
+            // Extract the suffix from the $table (last character after "_")
+            $suffix = substr($table, strrpos($table, '_') + 1);
+
+            // Construct the dynamic table name for the product main spec
+            $productMainSpecTable = "site_product_main_spec_" . $suffix;
+
+            // Start building SQL query
+            $sql = "SELECT * FROM $table WHERE site_id = :site_id AND deleted_at IS NULL";
+
+            // Add conditions for name, status, and platform_category_id if provided
+            if ($name !== null) {
+                $sql .= " AND name LIKE :name";
+            }
+            if ($status !== null) {
+                $sql .= " AND status = :status";
+            }
+            if ($platform_category_id !== null) {
+                $sql .= " AND platform_category_id = :platform_category_id";
+            }
+
+            // Add condition for inventory status
+            switch ($inventory_status) {
+                case 'partial':
+                    // Products with some specifications that have zero stock
+                    $sql .= " AND EXISTS (
+                    SELECT 1 FROM $productMainSpecTable
+                    WHERE $productMainSpecTable.product_id = $table.product_id
+                    AND $productMainSpecTable.inventory = 0
+                ) AND $table.inventory > 0"; // At least one product specification is out of stock
+                    break;
+                case 'none':
+                    // Products with zero or negative inventory
+                    $sql .= " AND $table.inventory <= 0";
+                    break;
+                case 'normal':
+                default:
+                    // Products with positive inventory
+                    $sql .= " AND $table.inventory > 0";
+                    break;
+            }
+
+            // Add ORDER BY and pagination
+            $sql .= " ORDER BY product_id DESC LIMIT :pageSize OFFSET :offset";
 
             // Prepare SQL statement
             $stmt = $this->conn->prepare($sql);
 
             // Bind parameters
             $stmt->bindParam(':site_id', $site_id, PDO::PARAM_INT);
+            if ($name !== null) {
+                $likeName = "%$name%";
+                $stmt->bindParam(':name', $likeName, PDO::PARAM_STR);
+            }
+            if ($status !== null) {
+                $stmt->bindParam(':status', $status, PDO::PARAM_INT);
+            }
+            if ($platform_category_id !== null) {
+                $stmt->bindParam(':platform_category_id', $platform_category_id, PDO::PARAM_INT);
+            }
             $stmt->bindParam(':pageSize', $pageSize, PDO::PARAM_INT);
             $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 
