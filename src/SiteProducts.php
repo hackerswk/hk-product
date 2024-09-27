@@ -91,9 +91,9 @@ EOF;
     }
 
     /**
-     * Retrieves products from the specified table with pagination, filtering by name, status, platform_category_id, and inventory status.
+     * Retrieves products from the specified table with pagination, filtering by name, status, category_id, and inventory status.
      *
-     * Dynamically generates the product main spec table based on the suffix of the given $table.
+     * Dynamically generates the product main spec and category tables based on the suffix of the given $table.
      *
      * @param string $table The name of the database table to query (must follow format: site_products_<letter>).
      * @param int $site_id The ID of the site to filter products by.
@@ -101,12 +101,12 @@ EOF;
      * @param int $pageSize The number of records per page.
      * @param string|null $name The optional name filter for products (fuzzy search).
      * @param int|null $status The status filter for products (default is 1).
-     * @param int|null $platform_category_id The platform category filter (optional).
+     * @param int|null $category_id The category filter (optional).
      * @param string $inventory_status The inventory status filter (default is 'normal'). Options: 'normal', 'partial', 'none'.
      *
      * @return array An array of products matching the criteria.
      */
-    public function getProducts($table, $site_id, $page, $pageSize, $status = 1, $inventory_status = 'normal', $name = null, $platform_category_id = null)
+    public function getProducts($table, $site_id, $page, $pageSize, $name = null, $status = 1, $category_id = null, $inventory_status = 'normal')
     {
         try {
             // Calculate OFFSET value
@@ -115,21 +115,25 @@ EOF;
             // Extract the suffix from the $table (last character after "_")
             $suffix = substr($table, strrpos($table, '_') + 1);
 
-            // Construct the dynamic table name for the product main spec
+            // Construct the dynamic table names for product main spec and category
             $productMainSpecTable = "site_product_main_spec_" . $suffix;
+            $productCategoryTable = "site_product_category_" . $suffix;
 
             // Start building SQL query
             $sql = "SELECT * FROM $table WHERE site_id = :site_id AND deleted_at IS NULL";
 
-            // Add conditions for name, status, and platform_category_id if provided
+            // Add conditions for name and status if provided
             if ($name !== null) {
                 $sql .= " AND name LIKE :name";
             }
             if ($status !== null) {
                 $sql .= " AND status = :status";
             }
-            if ($platform_category_id !== null) {
-                $sql .= " AND platform_category_id = :platform_category_id";
+
+            // Add condition for category if provided
+            if ($category_id !== null) {
+                // Filter by product_id in the subquery for category filtering
+                $sql .= " AND product_id IN (SELECT product_id FROM $productCategoryTable WHERE category_id = :category_id)";
             }
 
             // Add condition for inventory status
@@ -168,8 +172,8 @@ EOF;
             if ($status !== null) {
                 $stmt->bindParam(':status', $status, PDO::PARAM_INT);
             }
-            if ($platform_category_id !== null) {
-                $stmt->bindParam(':platform_category_id', $platform_category_id, PDO::PARAM_INT);
+            if ($category_id !== null) {
+                $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
             }
             $stmt->bindParam(':pageSize', $pageSize, PDO::PARAM_INT);
             $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
