@@ -167,9 +167,10 @@ EOF;
                     $sql .= " AND $table.inventory <= 0";
                     break;
                 case 'normal':
-                default:
                     // Products with positive inventory
                     $sql .= " AND $table.inventory > 0";
+                    break;
+                default:
                     break;
             }
 
