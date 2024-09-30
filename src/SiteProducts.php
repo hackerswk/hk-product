@@ -155,7 +155,7 @@ EOF;
                             AND $productMainSpecTable.inventory > 0
                             AND EXISTS (
                                 SELECT 1 FROM $productSubSpecTable
-                                WHERE $productSubSpecTable.main_spec_id = $productMainSpecTable.id
+                                WHERE $productSubSpecTable.main_spec_id = $productMainSpecTable.main_spec_id
                                 AND $productSubSpecTable.inventory = 0
                             )
                         )
