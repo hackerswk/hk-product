@@ -106,7 +106,7 @@ EOF;
      *
      * @return array An array of products matching the criteria.
      */
-    public function getProducts($table, $site_id, $page, $pageSize, $name = null, $status = 1, $category_id = null, $inventory_status = 'normal')
+    public function getProducts($table, $site_id, $page, $pageSize, $name = null, $status = null, $category_id = null, $inventory_status = null)
     {
         try {
             // Calculate OFFSET value
@@ -140,27 +140,27 @@ EOF;
             // Add condition for inventory status
             switch ($inventory_status) {
                 case 'partial':
-                    // Products with some main specifications that have zero stock
-                    // No need to check sub specs if any main spec has inventory = 0
-                    $sql .= " AND (
-                    EXISTS (
-                        SELECT 1 FROM $productMainSpecTable
-                        WHERE $productMainSpecTable.product_id = $table.product_id
-                        AND $productMainSpecTable.inventory = 0
-                    )
-                    OR (
-                        $table.inventory > 0 AND EXISTS (
+                    // Products with some main specifications that have zero stock,
+                    // but overall product inventory should be greater than 0
+                    $sql .= " AND $table.inventory > 0 AND (
+                        EXISTS (
                             SELECT 1 FROM $productMainSpecTable
                             WHERE $productMainSpecTable.product_id = $table.product_id
-                            AND $productMainSpecTable.inventory > 0
-                            AND EXISTS (
-                                SELECT 1 FROM $productSubSpecTable
-                                WHERE $productSubSpecTable.main_spec_id = $productMainSpecTable.main_spec_id
-                                AND $productSubSpecTable.inventory = 0
+                            AND $productMainSpecTable.inventory = 0
+                        )
+                        OR (
+                            EXISTS (
+                                SELECT 1 FROM $productMainSpecTable
+                                WHERE $productMainSpecTable.product_id = $table.product_id
+                                AND $productMainSpecTable.inventory > 0
+                                AND EXISTS (
+                                    SELECT 1 FROM $productSubSpecTable
+                                    WHERE $productSubSpecTable.main_spec_id = $productMainSpecTable.main_spec_id
+                                    AND $productSubSpecTable.inventory = 0
+                                )
                             )
                         )
-                    )
-                )";
+                    )";
                     break;
                 case 'none':
                     // Products with zero or negative inventory
