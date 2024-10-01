@@ -66,7 +66,7 @@ EOF;
     {
         try {
             $sql = <<<EOF
-                SELECT * FROM $table WHERE sub_spec_id = :sub_spec_id
+                SELECT * FROM $table WHERE sub_spec_id = :sub_spec_id AND deleted_at IS NULL
 EOF;
 
             $stmt = $this->conn->prepare($sql);
@@ -90,7 +90,7 @@ EOF;
     {
         try {
             $sql = <<<EOF
-            SELECT * FROM $table WHERE main_spec_id = :main_spec_id
+            SELECT * FROM $table WHERE main_spec_id = :main_spec_id AND deleted_at IS NULL
 EOF;
 
             $stmt = $this->conn->prepare($sql);
