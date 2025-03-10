@@ -145,7 +145,7 @@ EOF;
     {
         try {
             $sql = <<<SQL
-                UPDATE $table SET inventory = :inventory, update_by = :update_by
+                UPDATE $table SET inventory = :inventory, updated_by = :updated_by
                 WHERE main_spec_id = :main_spec_id
 SQL;
 
@@ -153,7 +153,7 @@ SQL;
             return $stmt->execute([
                 ':main_spec_id' => $mainSpecId,
                 ':inventory' => $inventory,
-                ':update_by' => $updator,
+                ':updated_by' => $updator,
             ]);
         } catch (PDOException $e) {
             echo "Update MainSpec Inventroy Error: " . $e->getMessage();

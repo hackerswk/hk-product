@@ -248,14 +248,14 @@ EOF;
     {
         try {
             $sql = <<<SQL
-                UPDATE $table SET inventory = :inventory, update_by = :update_by
+                UPDATE $table SET inventory = :inventory, updated_by = :updated_by
                 WHERE product_id = :product_id
 SQL;
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
                 ':product_id' => $productId,
                 ':inventory' => $inventory,
-                ':update_by' => $updator
+                ':updated_by' => $updator
             ]);
         } catch (PDOException $e) {
             echo "Update Product Inventory Error: " . $e->getMessage();
@@ -276,14 +276,14 @@ SQL;
     {
         try {
             $sql = <<<SQL
-                UPDATE $table SET status = :status, update_by = :update_by
+                UPDATE $table SET status = :status, updated_by = :updated_by
                 WHERE product_id = :product_id
 SQL;
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
                 ':product_id' => $productId,
                 ':status' => $status,
-                ':update_by' => $updator
+                ':updated_by' => $updator
             ]);
         } catch (PDOException $e) {
             echo "Update Product Status Error: " . $e->getMessage();
