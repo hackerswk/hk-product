@@ -236,6 +236,34 @@ EOF;
     }
 
     /**
+     * Update an existing product inventory.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $productId Product ID
+     * @param int $inventory New product inventory
+     * @param int $updator Someone who updates the inventory of a product. Default = 0 (system)
+     * @return bool True on success, False on failure
+     */
+    public function updateProductInventory(string $table, int $productId, int $inventory, int $updator = 0): bool
+    {
+        try {
+            $sql = <<<SQL
+                UPDATE $table SET inventory = :inventory, update_by = :update_by
+                WHERE product_id = :product_id
+SQL;
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':product_id' => $productId,
+                ':inventory' => $inventory,
+                ':update_by' => $updator
+            ]);
+        } catch (PDOException $e) {
+            echo "Update Product Inventory Error: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
      * Update an existing product status.
      *
      * @param string $table The name of the SQL table
