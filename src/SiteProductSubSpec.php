@@ -129,6 +129,35 @@ EOF;
     }
 
     /**
+     * Update an existing product sub specification inventory.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $subSpecId Sub specification ID
+     * @param int $inventory New inventory data
+     * @param int $updator Someone who updates the inventory of a product sub specification. Default = 0 (system)
+     * @return bool True on success, False on failure
+     */
+    public function updateProductSubSpecInventory(string $table, int $subSpecId, int $inventory, int $updator = 0): bool
+    {
+        try {
+            $sql = <<<SQL
+                UPDATE $table SET inventory = :inventory, update_by = :update_by
+                WHERE sub_spec_id = :sub_spec_id
+SQL;
+
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':sub_spec_id' => $subSpecId,
+                ':inventory' => $inventory,
+                ':update_by' => $updator,
+            ]);
+        } catch (PDOException $e) {
+            echo "Update SubSpec Inventroy Error: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
      * Delete a product sub specification by its ID.
      *
      * @param string $table The name of the SQL table

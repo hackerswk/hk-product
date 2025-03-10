@@ -133,6 +133,35 @@ EOF;
     }
 
     /**
+     * Update an existing product main specification inventory.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $mainSpecId Main specification ID
+     * @param int $inventory New inventory data
+     * @param int $updator Someone who updates the inventory of a product main specification. Default = 0 (system)
+     * @return bool True on success, False on failure
+     */
+    public function updateProductMainSpecInventory(string $table, int $mainSpecId, int $inventory, int $updator): bool
+    {
+        try {
+            $sql = <<<SQL
+                UPDATE $table SET inventory = :inventory, update_by = :update_by
+                WHERE main_spec_id = :main_spec_id
+SQL;
+
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':main_spec_id' => $mainSpecId,
+                ':inventory' => $inventory,
+                ':update_by' => $updator,
+            ]);
+        } catch (PDOException $e) {
+            echo "Update MainSpec Inventroy Error: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
      * Delete a product main specification by its ID.
      *
      * @param string $table The name of the SQL table

@@ -236,6 +236,34 @@ EOF;
     }
 
     /**
+     * Update an existing product status.
+     *
+     * @param string $table The name of the SQL table
+     * @param int $productId Product ID
+     * @param int $status New product status
+     * @param int $updator Someone who updates the status of a product. Default = 0 (system)
+     * @return bool True on success, False on failure
+     */
+    public function updateProductStatus(string $table, int $productId, int $status, int $updator = 0): bool
+    {
+        try {
+            $sql = <<<SQL
+                UPDATE $table SET status = :status, update_by = :update_by
+                WHERE product_id = :product_id
+SQL;
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':product_id' => $productId,
+                ':status' => $status,
+                ':update_by' => $updator
+            ]);
+        } catch (PDOException $e) {
+            echo "Update Product Status Error: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
      * Delete a product by its ID.
      *
      * @param string $table The name of the SQL table
